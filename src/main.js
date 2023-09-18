@@ -25,7 +25,11 @@ export async function main(
     };
 
     if (!TELEGRAM_MESSAGE.file_id || !TELEGRAM_MESSAGE.description) {
-      ctx.reply("erro");
+      ctx.reply(`Deve ser envia o comprovante com a legenda na seguinte estrutura:
+      - Nome do titular da Fatura
+      - Quem efetuou o pagamento
+      - Valor da fatura
+      - "Descrição" da fatura`);
       return;
     }
 
