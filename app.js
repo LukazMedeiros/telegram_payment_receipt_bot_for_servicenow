@@ -1,7 +1,12 @@
 import { config } from "dotenv";
 import { main } from "./src/main.js";
+import express from "express";
 
 config();
+
+const SERVER = express();
+
+SERVER.listen(process.env.PORT);
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const ATTACHMENT_URL = process.env.ATTACHMENT_URL;

@@ -20,7 +20,10 @@ export async function main(
         first_name: ctx?.update?.message?.from?.first_name,
         last_name: ctx?.update?.message?.from?.last_name,
       },
-      file_id: ctx?.update?.message?.document?.file_id,
+      file_id:
+        ctx?.update?.message?.document?.file_id ||
+        ctx?.update?.message?.photo[ctx?.update?.message?.photo.length - 1]
+          ?.file_id,
       description: ctx?.update?.message?.caption?.split(/\n/gm),
     };
 
@@ -58,7 +61,7 @@ export async function main(
     const RECEIPT_VALUE = {
       holder: TELEGRAM_MESSAGE.description[0],
       payer: TELEGRAM_MESSAGE.description[1],
-      amount: TELEGRAM_MESSAGE.description[2].replace(",", "."),
+      amount: TELEGRAM_MESSAGE.description[2]?.replace(",", "."),
       instituition: TELEGRAM_MESSAGE.description[3],
       receipt: sys_id,
     };
