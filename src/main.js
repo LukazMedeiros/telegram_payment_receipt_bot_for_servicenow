@@ -58,7 +58,7 @@ export async function main(
     const RECEIPT_VALUE = {
       holder: TELEGRAM_MESSAGE.description[0],
       payer: TELEGRAM_MESSAGE.description[1],
-      amount: TELEGRAM_MESSAGE.description[2].replace(",", "."),
+      amount: TELEGRAM_MESSAGE.description[2]?.replace(",", "."),
       instituition: TELEGRAM_MESSAGE.description[3],
       receipt: sys_id,
     };
