@@ -1,15 +1,12 @@
 import { config } from "dotenv";
 import { main } from "./src/main.js";
-import { createServer } from "http";
+import express from "express";
 
 config();
 
-createServer(function (req, res) {
-  res.writeHead(200, {
-    "Content-Type": "text/plain",
-  });
-  res.send("it is running\n");
-}).listen(process.env.PORT);
+const SERVER = express();
+
+SERVER.listen(process.env.PORT);
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const ATTACHMENT_URL = process.env.ATTACHMENT_URL;
