@@ -15,17 +15,25 @@ export async function main(
   const BOT = new Telegraf(TELEGRAM_TOKEN);
 
   BOT.on("message", async (ctx) => {
-    const TELEGRAM_MESSAGE = {
+    let TELEGRAM_MESSAGE = {
       user: {
         first_name: ctx?.update?.message?.from?.first_name,
         last_name: ctx?.update?.message?.from?.last_name,
       },
-      file_id:
-        ctx?.update?.message?.document?.file_id ||
-        ctx?.update?.message?.photo[ctx?.update?.message?.photo.length - 1]
-          ?.file_id,
-      description: ctx?.update?.message?.caption?.split(/\n/gm),
     };
+
+    if (Object.keys(ctx.update.message).includes("photo")) {
+      TELEGRAM_MESSAGE.file_id =
+        ctx?.update?.message?.photo[
+          ctx?.update?.message?.photo.length - 1
+        ]?.file_id;
+    }
+
+    if (Object.keys(ctx.update.message).includes("document")) {
+      TELEGRAM_MESSAGE.file_id = ctx?.update?.message?.document?.file_id;
+    }
+
+    TELEGRAM_MESSAGE.description = ctx?.update?.message?.caption?.split(/\n/gm);
 
     if (!TELEGRAM_MESSAGE.file_id || !TELEGRAM_MESSAGE.description) {
       ctx.reply(`Deve ser enviado comprovante com a legenda na seguinte estrutura:
