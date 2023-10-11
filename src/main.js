@@ -14,6 +14,13 @@ export async function main(
 ) {
   const BOT = new Telegraf(TELEGRAM_TOKEN);
 
+  BOT.hears(/relatorio|relatório/gm, async (ctx) => {
+    ctx.reply(
+      "https://dev174442.service-now.com/sys_report_display.do?sysparm_report_id=b31fcd8a2fb1b1104b00e33df699b6e5"
+    );
+    return;
+  });
+
   BOT.on("message", async (ctx) => {
     let TELEGRAM_MESSAGE = {
       user: {
