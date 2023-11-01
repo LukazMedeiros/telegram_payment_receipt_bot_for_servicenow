@@ -2,11 +2,7 @@ import { Telegraf } from "telegraf";
 import { message } from "telegraf/filters";
 import express from "express";
 import cors from "cors";
-import { downloadFile } from "./downloadFile";
-import { mkdtempSync, rmSync } from "fs";
-import { getTelegramFileInfo } from "./telegramFileInfo";
-import { sendFileToServicenow } from "./sendFileToServicenow";
-import { updateReceipts } from "./updateReceipts";
+import { handleFile } from "./handleFiles";
 
 const SERVER = express();
 SERVER.use(cors());
@@ -42,32 +38,22 @@ BOT.command("relatorios", (ctx) => {
 });
 
 BOT.on(message("document"), async (ctx) => {
-  //
-  try {
-    const { FILE, URL } = await getTelegramFileInfo(
-      ctx.update.message.document.file_id
-    );
-    const TEMP_DIRECTORY = mkdtempSync("TEMP-");
+  const result = await handleFile(ctx, ctx.update.message.document.file_id);
 
-    const downloadResult = await downloadFile(URL!, TEMP_DIRECTORY, FILE);
-    if (!downloadResult) {
-      return ctx.replyWithHTML("erro ao efetuar o download do arquivo");
-    }
-
-    const { sys_id } = await sendFileToServicenow(FILE, TEMP_DIRECTORY);
-
-    const { result } = await updateReceipts(sys_id, ctx);
-    console.log(result);
-    rmSync(TEMP_DIRECTORY, { recursive: true, force: true });
-  } catch (error) {}
-
-  //
-
-  return ctx.replyWithHTML("mensagem de retorno de documentos");
+  return ctx.replyWithHTML(
+    `mensagem de retorno de documentos ${JSON.stringify(result)}`
+  );
 });
 
 BOT.on(message("photo"), async (ctx) => {
-  return ctx.replyWithHTML("mensagem de retorno de foto");
+  const photoIndex = ctx.update.message.photo.length;
+  const result = await handleFile(
+    ctx,
+    ctx.update.message.photo[photoIndex - 1].file_id
+  );
+  return ctx.replyWithHTML(
+    `mensagem de retorno de foto ${JSON.stringify(result)}`
+  );
 });
 
 BOT.launch();
