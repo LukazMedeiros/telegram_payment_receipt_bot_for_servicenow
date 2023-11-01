@@ -3,7 +3,7 @@ import { message } from "telegraf/filters";
 import express from "express";
 import cors from "cors";
 import { downloadFile } from "./downloadFile";
-import { mkdtempSync } from "fs";
+import { mkdtempSync, rmSync } from "fs";
 import { getTelegramFileInfo } from "./telegramFileInfo";
 import { sendFileToServicenow } from "./sendFileToServicenow";
 import { updateReceipts } from "./updateReceipts";
@@ -57,7 +57,8 @@ BOT.on(message("document"), async (ctx) => {
     const { sys_id } = await sendFileToServicenow(FILE, TEMP_DIRECTORY);
 
     const { result } = await updateReceipts(sys_id, ctx);
-    console.log(sys_id);
+    console.log(result);
+    rmSync(TEMP_DIRECTORY, { recursive: true, force: true });
   } catch (error) {}
 
   //

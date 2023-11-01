@@ -6,10 +6,10 @@ export async function updateReceipts(sys_id: string, ctx) {
   };
 
   const RECEIPTS = {
-    holder: "",
-    payer: "",
-    amount: "",
-    instituition: "",
+    holder: "teste",
+    payer: "teste",
+    amount: "1",
+    instituition: "teste",
     receipt: sys_id,
   };
 
