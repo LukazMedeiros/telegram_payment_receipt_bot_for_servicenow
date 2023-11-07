@@ -3,6 +3,7 @@ import { message } from "telegraf/filters";
 import express from "express";
 import cors from "cors";
 import { handleFile } from "./handleFiles";
+import { handleReceiptData } from "./handleReceiptData";
 
 const SERVER = express();
 SERVER.use(cors());
@@ -30,7 +31,13 @@ BOT.help((ctx) => {
 });
 
 BOT.command("novo", (ctx) => {
-  return ctx.replyWithHTML("mensagem comando novo");
+  const message = `Envie o arquivo do comprovante com a legenda na seguinte estrutura:
+•	nome do titular da fatura
+•	nome de quem efetuou o pagamento
+•	valor da fatura ex: 9999,99
+•	descrição da fatura ex: companhia elétrica
+`;
+  return ctx.replyWithHTML(message);
 });
 
 BOT.command("relatorios", (ctx) => {
@@ -38,22 +45,29 @@ BOT.command("relatorios", (ctx) => {
 });
 
 BOT.on(message("document"), async (ctx) => {
-  const result = await handleFile(ctx, ctx.update.message.document.file_id);
+  try {
+    const data = handleReceiptData(ctx.update.message.caption);
+    const result = await handleFile(data, ctx.update.message.document.file_id);
 
-  return ctx.replyWithHTML(
-    `mensagem de retorno de documentos ${JSON.stringify(result)}`
-  );
+    return ctx.replyWithHTML(`[NOVO REGISTRO] - ${result.number}`);
+  } catch (error) {
+    return ctx.replyWithHTML(`Ocorreu um erro ${error}`);
+  }
 });
 
 BOT.on(message("photo"), async (ctx) => {
-  const photoIndex = ctx.update.message.photo.length;
-  const result = await handleFile(
-    ctx,
-    ctx.update.message.photo[photoIndex - 1].file_id
-  );
-  return ctx.replyWithHTML(
-    `mensagem de retorno de foto ${JSON.stringify(result)}`
-  );
+  try {
+    const photoIndex = ctx.update.message.photo.length;
+    const data = handleReceiptData(ctx.update.message.caption);
+    const result = await handleFile(
+      data,
+      ctx.update.message.photo[photoIndex - 1].file_id
+    );
+
+    return ctx.replyWithHTML(`[NOVO REGISTRO] - ${result.number}`);
+  } catch (error) {
+    return ctx.replyWithHTML(`Ocorreu um erro ${error}`);
+  }
 });
 
 BOT.launch();

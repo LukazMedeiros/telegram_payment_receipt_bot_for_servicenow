@@ -4,7 +4,7 @@ import { downloadFile } from "./downloadFile";
 import { sendFileToServicenow } from "./sendFileToServicenow";
 import { updateReceipts } from "./updateReceipts";
 
-export async function handleFile(ctx, fileId: string) {
+export async function handleFile(ctx: any, fileId: string) {
   try {
     const { FILE, URL } = await getTelegramFileInfo(fileId);
 
